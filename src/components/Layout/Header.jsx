@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 // overflow-hidden
 function Header() {
   return (
-    <header className="h-16 w-full bg-surface-container border-outline shadow-md  overflow-hidden">
+    <header className="h-16 w-full font-serif bg-surface-container border-outline shadow-md  overflow-hidden">
       <div className="flex justify-start items-center  w-full h-16">
         <img className="h-32 w-auto ml-3" src={logo} alt="logo" />
 
@@ -23,7 +23,7 @@ function Header() {
      }`
             }
           >
-            Домашняя страница
+            Home
           </NavLink>
           <NavLink
             to={"/login"}
@@ -32,7 +32,7 @@ function Header() {
              after:h-0.5 after:w-0 after:bg-primary after:transition-all
              hover:after:w-full"
           >
-            <span className="px-2">Войти</span>
+            <span className="px-2">Log in</span>
             <img className="h-6 w-6" src={iconP} alt="icon" />
           </NavLink>
         </nav>
