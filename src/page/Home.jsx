@@ -1,59 +1,34 @@
 import { data, Link } from "react-router-dom";
 import reverseIcon from "../assets/reverseIcon.jpg";
-import { useRef, useState, useEffect } from "react";
 
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css"; // ← стили библиотеки
 import { ru } from "date-fns/locale";
 import searchIcon from "../assets/searchIcon.png";
+import { useSearch } from "../hooks/useSearch";
+import { SearchForm } from "../components/Search/SearchForm";
 
-const KEY = import.meta.env.VITE_DUFFEL_TOKEN;
 function Home() {
   // const [startDate, endDate] = dateRange;
-
-  const [cities, setCites] = useState([]);
-  const [openFrom, setOpenFrom] = useState(false);
-  const [openTo, setOpenTo] = useState(false);
-  const [queryFrom, setQueryFrom] = useState("");
-  const [queryTo, setQueryTo] = useState("");
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch("/duffel-api/air/cities", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${KEY}`,
-            "Duffel-Version": "v2",
-            Accept: "application/json",
-            "Accept-Language": "ru",
-          },
-        });
-        const data = await response.json();
-        setCites(data.data);
-
-        console.log(data);
-      } catch (error) {
-        console.error("Ошибка при получении данных:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  const filterOne = cities.filter((city) =>
-    (city.name || "").toLowerCase().includes(queryFrom.toLowerCase()),
-  );
-  const filterTwo = cities.filter((city) =>
-    (city.name || "").toLowerCase().includes(queryTo.toLowerCase()),
-  );
-
-  const handleSwap = () => {
-    setQueryFrom(queryTo);
-    setQueryTo(queryFrom);
-  };
-
-  const dialogRef = useRef(null);
+  const {
+    openFrom,
+    setOpenFrom,
+    openTo,
+    setOpenTo,
+    queryFrom,
+    setQueryFrom,
+    queryTo,
+    setQueryTo,
+    filterOne,
+    filterTwo,
+    handleSwap,
+    selectFrom,
+    selectTo,
+    startDay,
+    serStartDay,
+    endDay,
+    setEndDay,
+  } = useSearch();
 
   return (
     <div className="flex flex-col bg-linear-to-t from-primary-after to-primary h-96 w-full">
@@ -61,36 +36,21 @@ function Home() {
         <div className="flex">
           <h1 className="text-4xl text-text-on-dark">Find your next journey</h1>
         </div>
+
         <form className="flex flex-row items-center font-serif  px-6 gap-3 h-33 w-5xl bg-surface-container rounded-xl ">
-          <div className="flex flex-col relative h-14 w-44">
-            <input
-              className="border-2 border-outline placeholder-text-secondary rounded-lg h-14 w-full pl-4 pr-4"
-              type="text"
-              value={queryFrom}
-              placeholder="Where from"
-              onBlur={() => setTimeout(() => setOpenFrom(false), 200)}
-              onFocus={() => setOpenFrom(true)}
-              onChange={(e) => {
-                setQueryFrom(e.target.value);
-                setOpenFrom(true);
-              }}
-            />
-            {openFrom && queryFrom && filterOne.length > 0 && (
-              <ul className="absolute mt-14 bg-surface-container border-2 border-outline rounded-lg w-full max-h-48 overflow-y-auto z-10">
-                {filterOne.map((city) => (
-                  <li
-                    onMouseDown={() => {
-                      setQueryFrom(city.name);
-                      setOpenFrom(false);
-                    }}
-                    key={city.id}
-                  >
-                    {city.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <SearchForm
+            value={queryFrom}
+            placeholder="Where from"
+            isOpen={openFrom}
+            suggestions={filterOne}
+            onChange={(e) => {
+              setQueryFrom(e.target.value);
+              setOpenFrom(true);
+            }}
+            onFocus={() => setOpenFrom(true)}
+            onBlur={() => setTimeout(() => setOpenFrom(false), 200)}
+            onSelect={selectFrom}
+          />
 
           {/* Кнопка для смены направления поиска */}
           <button
@@ -106,35 +66,19 @@ function Home() {
           </button>
 
           {/* Билеты в другую сторону */}
-          <div className="flex flex-col relative h-14 w-44 mr-15 ">
-            <input
-              className="border-2 border-outline rounded-lg placeholder-text-secondary  h-14 w-full pl-4 pr-4"
-              value={queryTo}
-              onBlur={() => setTimeout(() => setOpenTo(false), 200)}
-              onFocus={() => setOpenTo(true)}
-              onChange={(e) => {
-                setQueryTo(e.target.value);
-                setOpenTo(true);
-              }}
-              type="text"
-              placeholder="Where to"
-            />
-            {openTo && queryTo && filterTwo.length > 0 && (
-              <ul className="absolute mt-14 bg-surface-container border-2 border-outline rounded-lg w-full max-h-48 overflow-y-auto z-10">
-                {filterTwo.map((city) => (
-                  <li
-                    onMouseDown={() => {
-                      setQueryTo(city.name);
-                      setOpenTo(false);
-                    }}
-                    key={city.id}
-                  >
-                    {city.name}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <SearchForm
+            value={queryTo}
+            placeholder="Where to"
+            isOpen={openTo}
+            suggestions={filterTwo}
+            onChange={(e) => {
+              setQueryTo(e.target.value);
+              setOpenTo(true);
+            }}
+            onFocus={() => setOpenTo(true)}
+            onBlur={() => setTimeout(() => setOpenTo(false), 200)}
+            onSelect={selectTo}
+          />
 
           {/* Кнопка для выбора даты */}
           <div className="flex items-center h-14 w-auto">
