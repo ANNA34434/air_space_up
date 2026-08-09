@@ -8,7 +8,7 @@ export const useSearch = () => {
   const [openTo, setOpenTo] = useState(false);
   const [queryFrom, setQueryFrom] = useState("");
   const [queryTo, setQueryTo] = useState("");
-  const [startDay, serStartDay] = useState(null);
+  const [startDay, setStartDay] = useState(null);
   const [endDay, setEndDay] = useState(null);
 
   // const dialogRef = useRef(null);
@@ -58,6 +58,13 @@ export const useSearch = () => {
     setQueryFrom(queryTo);
     setQueryTo(queryFrom);
   };
+
+  const handleDayts = (dates) => {
+    const [start, end] = dates;
+    setEndDay(end);
+    setStartDay(start);
+  };
+
   return {
     openFrom,
     setOpenFrom,
@@ -73,8 +80,9 @@ export const useSearch = () => {
     selectFrom,
     selectTo,
     startDay,
-    serStartDay,
+    setStartDay,
     endDay,
     setEndDay,
+    handleDayts,
   };
 };

@@ -25,9 +25,10 @@ function Home() {
     selectFrom,
     selectTo,
     startDay,
-    serStartDay,
+    setStartDay,
     endDay,
     setEndDay,
+    handleDayts,
   } = useSearch();
 
   return (
@@ -83,15 +84,16 @@ function Home() {
           {/* Кнопка для выбора даты */}
           <div className="flex items-center h-14 w-auto">
             <DatePicker
+              startDate={startDay}
+              endDate={endDay}
+              onChange={handleDayts}
               className="border-2 border-outline rounded-lg h-14 w-57 pl-4 pr-4 placeholder-text-secondary"
               selectsRange
               locale={ru}
-              startDate={null}
-              endDate={null}
               placeholderText="Departure and return dates"
               dateFormat="dd.MM.yyyy"
               minDate={new Date()}
-              selected={null}
+              // selected={null}
               monthsShown={2}
             />
           </div>
