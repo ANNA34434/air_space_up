@@ -11,7 +11,16 @@ export const useSearch = () => {
   const [startDay, setStartDay] = useState(null);
   const [endDay, setEndDay] = useState(null);
 
-  // const dialogRef = useRef(null);
+  const [passengerSelection, setPassengerSelection] = useState({
+    serviceClass: "economy",
+    adults: 1,
+    children: 0,
+    infants: 0,
+  });
+
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const dialogRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,6 +74,55 @@ export const useSearch = () => {
     setStartDay(start);
   };
 
+  const handleConfirmPassengerSelection = (selection) => {
+    setPassengerSelection(selection);
+  };
+
+  const handleOpen = () => {
+    setOpenDialog(true);
+    // dialogRef.current.showModal();
+  };
+  const handleClose = (e) => {
+    if (!e || e.target === e.currentTarget) {
+      setOpen(false);
+    }
+    // dialogRef.current.close();
+  };
+  useEffect(() => {
+    if (!openDialog) return;
+
+    const handleClickOutside = (e) => {
+      if (dialogRef.current && !dialogRef.current.contains(e.target)) {
+        setOpenDialog(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [openDialog]);
+
+  const increment = (passenger) => {
+    setPassengerSelection((prev) => {
+      return {
+        ...prev,
+        [passenger]: prev[passenger] + 1,
+      };
+    });
+  };
+
+  const decrement = (passenger) => {
+    setPassengerSelection((prev) => {
+      return {
+        ...prev,
+        [passenger]: Math.max(0, prev[passenger] - 1),
+      };
+    });
+  };
+
+  const totalPassenger =
+    passengerSelection.adults +
+    passengerSelection.children +
+    passengerSelection.infants;
+
   return {
     openFrom,
     setOpenFrom,
@@ -84,5 +142,16 @@ export const useSearch = () => {
     endDay,
     setEndDay,
     handleDayts,
+    passengerSelection,
+    setPassengerSelection,
+    handleConfirmPassengerSelection,
+    handleOpen,
+    handleClose,
+    openDialog,
+    setOpenDialog,
+    dialogRef,
+    decrement,
+    increment,
+    totalPassenger,
   };
 };

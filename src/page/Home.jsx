@@ -29,6 +29,17 @@ function Home() {
     endDay,
     setEndDay,
     handleDayts,
+    passengerSelection,
+    setPassengerSelection,
+    handleConfirmPassengerSelection,
+    handleOpen,
+    handleClose,
+    openDialog,
+    setOpenDialog,
+    dialogRef,
+    decrement,
+    increment,
+    totalPassenger,
   } = useSearch();
 
   return (
@@ -99,53 +110,82 @@ function Home() {
           </div>
 
           {/* Кнопка для выбора пассажиров и класса */}
-          <div className="flex flex-col gap-1 relative h-14 w-56  ">
+          <div className="flex flex-col gap-1 relative h-14 w-60  ">
             <div className="flex items-center h-14 w-auto border-2 border-outline bg-surface-container rounded-lg pl-4 pr-4">
-              <button>
-                <span className="bg-surface-container text-text-secondary">
+              <button
+                type="button"
+                onClick={handleOpen}
+                className="h-14 w-auto"
+              >
+                <span className="bg-surface-container text-text-secondary ">
                   Passengers and class
                 </span>
-                <img src="" alt="" />
-                {/* <span className="bg-surface-container text-text-secondary">
-                  1 Adult, Economy
-                </span> */}
+
+                <span className="bg-surface-container text-text-secondary">
+                  {totalPassenger} Passenger{totalPassenger > 1 ? "s" : ""},{" "}
+                  {passengerSelection.serviceClass}
+                </span>
               </button>
             </div>
 
             {/* Модальное окно для выбора пассажиров и класса */}
-            <dialog>
-              <p>Passengers and class</p>
-              <select name="" id="">
-                <option value="">Economy</option>
-                <option value="">Comfort</option>
-                <option value="">Business</option>
-                <option value="">First Class</option>
-              </select>
-              <div>
-                <p>Adults (from 12 years)</p>
+
+            {openDialog && (
+              <dialog open ref={dialogRef} className="absolute z-50 p-4">
+                <p>Passengers and class</p>
+                <select
+                  value={passengerSelection.serviceClass}
+                  onChange={(e) =>
+                    setPassengerSelection((prev) => ({
+                      ...prev,
+                      serviceClass: e.target.value,
+                    }))
+                  }
+                >
+                  <option value="economy">Economy</option>
+                  <option value="comfort">Comfort</option>
+                  <option value="business">Business</option>
+                  <option value="firstClass">First Class</option>
+                </select>
                 <div>
-                  <button>-</button>
-                  <span>1</span>
-                  <button>+</button>
+                  <p>Adults (from 12 years)</p>
+                  <div>
+                    <button type="button" onClick={() => decrement("adults")}>
+                      -
+                    </button>
+                    <span>{passengerSelection.adults}</span>
+                    <button type="button" onClick={() => increment("adults")}>
+                      +
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <p>Children (from 0 to 12 years)</p>
                 <div>
-                  <button>-</button>
-                  <span>0</span>
-                  <button>+</button>
+                  <p>Children (from 0 to 12 years)</p>
+                  <div>
+                    <button type="button" onClick={() => decrement("children")}>
+                      -
+                    </button>
+                    <span>{passengerSelection.children}</span>
+                    <button type="button" onClick={() => increment("children")}>
+                      +
+                    </button>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <p>Infants (up to 2 years)</p>
                 <div>
-                  <button>-</button>
-                  <span>0</span>
-                  <button>+</button>
+                  <p>Infants (up to 2 years)</p>
+                  <div>
+                    <button type="button" onClick={() => decrement("infants")}>
+                      -
+                    </button>
+                    <span>{passengerSelection.infants}</span>
+                    <button type="button" onClick={() => increment("infants")}>
+                      +
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </dialog>
+                <button onClick={() => handleClose()}>Закрыть</button>
+              </dialog>
+            )}
           </div>
 
           {/* Кнопка поиска */}
