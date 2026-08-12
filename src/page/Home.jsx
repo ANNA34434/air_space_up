@@ -40,6 +40,11 @@ function Home() {
     decrement,
     increment,
     totalPassenger,
+
+    fromFocused,
+    setFromFocused,
+    toFocused,
+    setToFocused,
   } = useSearch();
 
   return (
@@ -52,15 +57,24 @@ function Home() {
         <form className="flex flex-row items-center font-serif  px-6 gap-3 h-33 w-5xl bg-surface-container rounded-xl ">
           <SearchForm
             value={queryFrom}
-            placeholder="Where from"
+            isFocused={fromFocused}
+            label="Where from"
             isOpen={openFrom}
             suggestions={filterOne}
             onChange={(e) => {
               setQueryFrom(e.target.value);
               setOpenFrom(true);
             }}
-            onFocus={() => setOpenFrom(true)}
-            onBlur={() => setTimeout(() => setOpenFrom(false), 200)}
+            onFocus={() => {
+              setOpenFrom(true);
+              setFromFocused(true); // ← добавили
+            }}
+            onBlur={() => {
+              setTimeout(() => {
+                setOpenFrom(false);
+                setFromFocused(false); // ← добавили
+              }, 200);
+            }}
             onSelect={selectFrom}
           />
 
@@ -80,48 +94,58 @@ function Home() {
           {/* Билеты в другую сторону */}
           <SearchForm
             value={queryTo}
-            placeholder="Where to"
+            isFocused={toFocused}
+            label="Where to"
             isOpen={openTo}
             suggestions={filterTwo}
             onChange={(e) => {
               setQueryTo(e.target.value);
               setOpenTo(true);
             }}
-            onFocus={() => setOpenTo(true)}
-            onBlur={() => setTimeout(() => setOpenTo(false), 200)}
+            onFocus={() => {
+              setOpenTo(true);
+              setToFocused(true); // ← добавили
+            }}
+            onBlur={() => {
+              setTimeout(() => {
+                setOpenTo(false);
+                setToFocused(false); // ← добавили
+              }, 200);
+            }}
             onSelect={selectTo}
           />
 
           {/* Кнопка для выбора даты */}
-          <div className="flex items-center h-14 w-auto">
-            <DatePicker
-              startDate={startDay}
-              endDate={endDay}
-              onChange={handleDayts}
-              className="border-2 border-outline rounded-lg h-14 w-57 pl-4 pr-4 placeholder-text-secondary"
-              selectsRange
-              locale={ru}
-              placeholderText="Departure and return dates"
-              dateFormat="dd.MM.yyyy"
-              minDate={new Date()}
-              // selected={null}
-              monthsShown={2}
-            />
+          <div className="flex items-center h-14 w-57">
+            <div className="">
+              <DatePicker
+                startDate={startDay}
+                endDate={endDay}
+                onChange={handleDayts}
+                className="border-2 border-outline rounded-lg h-14 w-57 pl-4 pr-4 placeholder-text-secondary"
+                selectsRange
+                locale={ru}
+                placeholderText="Departure and return dates"
+                dateFormat="dd.MM.yyyy"
+                minDate={new Date()}
+                // selected={null}
+                monthsShown={2}
+              />
+            </div>
           </div>
 
           {/* Кнопка для выбора пассажиров и класса */}
-          <div className="flex flex-col gap-1 relative h-14 w-60  ">
-            <div className="flex items-center h-14 w-auto border-2 border-outline bg-surface-container rounded-lg pl-4 pr-4">
+          <div className="flex flex-col gap-1 relative h-14 w-30">
+            <div className="flex flex-col gap-1 relative h-14 w-55 ">
               <button
                 type="button"
                 onClick={handleOpen}
-                className="h-14 w-auto"
+                className="flex flex-col justify-center items-start gap-0.5 h-14 w-full px-4 rounded-lg  bg-surface-container border-2 border-outline focus:outline-none focus:border-black focus:ring-0.5 focus:ring-black"
               >
-                <span className="bg-surface-container text-text-secondary ">
+                <span className="block text-text-secondary truncate">
                   Passengers and class
                 </span>
-
-                <span className="bg-surface-container text-text-secondary">
+                <span className="block text-text-secondary truncate">
                   {totalPassenger} Passenger{totalPassenger > 1 ? "s" : ""},{" "}
                   {passengerSelection.serviceClass}
                 </span>
@@ -129,11 +153,15 @@ function Home() {
             </div>
 
             {/* Модальное окно для выбора пассажиров и класса */}
-
             {openDialog && (
-              <dialog open ref={dialogRef} className="absolute z-50 p-4">
-                <p>Passengers and class</p>
+              <dialog
+                open
+                ref={dialogRef}
+                className="absolute left-27.5 -translate-x-1/2 z-50 border-2 border-outline placeholder-text-secondary rounded-lg max-h-70 w-69 overflow-y-auto mt-16.5 px-4 "
+              >
+                <p className="text-xl mt-2 mb-2">Service class</p>
                 <select
+                  className="border-2 rounded-lg border-outline h-9 w-28 mb-5"
                   value={passengerSelection.serviceClass}
                   onChange={(e) =>
                     setPassengerSelection((prev) => ({
@@ -147,50 +175,110 @@ function Home() {
                   <option value="business">Business</option>
                   <option value="firstClass">First Class</option>
                 </select>
-                <div>
-                  <p>Adults (from 12 years)</p>
-                  <div>
-                    <button type="button" onClick={() => decrement("adults")}>
-                      -
-                    </button>
-                    <span>{passengerSelection.adults}</span>
-                    <button type="button" onClick={() => increment("adults")}>
-                      +
-                    </button>
+                <hr className="border-t border-outline  mb-2 -mt-2" />
+                <div className="flex flex-col gap-4">
+                  <p className="text-xl">Passengers</p>
+                  <div className="flex justify-between items-center gap-2">
+                    <div className="flex flex-col">
+                      <p className="text-text-primary">Adults</p>
+                      <p className="text-text-secondary text-sm">
+                        (from 12 years)
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="h-8 w-8 border-2 border-on-secondary-container rounded-lg flex items-center justify-center"
+                        type="button"
+                        onClick={() => decrement("adults")}
+                      >
+                        −
+                      </button>
+                      <span className="w-6 text-center">
+                        {passengerSelection.adults}
+                      </span>
+                      <button
+                        className="h-8 w-8 border-2 border-on-secondary-container rounded-lg flex items-center justify-center"
+                        type="button"
+                        onClick={() => increment("adults")}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Children */}
+                  <div className="flex justify-between items-center gap-2">
+                    <div className="flex flex-col">
+                      <p className="text-text-primary">Children</p>
+                      <p className="text-text-secondary text-sm">
+                        (from 0 to 12 years)
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="h-8 w-8 border-2 border-on-secondary-container rounded-lg flex items-center justify-center"
+                        type="button"
+                        onClick={() => decrement("children")}
+                      >
+                        −
+                      </button>
+                      <span className="w-6 text-center">
+                        {passengerSelection.children}
+                      </span>
+                      <button
+                        className="h-8 w-8 border-2 border-on-secondary-container rounded-lg flex items-center justify-center"
+                        type="button"
+                        onClick={() => increment("children")}
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Infants */}
+                  <div className="flex justify-between items-center gap-2">
+                    <div className="flex flex-col">
+                      <p className="text-text-primary">Infants</p>
+                      <p className="text-text-secondary text-sm">
+                        (up to 2 years)
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        className="h-8 w-8 border-2 border-on-secondary-container rounded-lg flex items-center justify-center"
+                        type="button"
+                        onClick={() => decrement("infants")}
+                      >
+                        −
+                      </button>
+                      <span className="w-6 text-center">
+                        {passengerSelection.infants}
+                      </span>
+                      <button
+                        className="h-8 w-8 border-2 border-on-secondary-container rounded-lg flex items-center justify-center"
+                        type="button"
+                        onClick={() => increment("infants")}
+                      >
+                        +
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div>
-                  <p>Children (from 0 to 12 years)</p>
-                  <div>
-                    <button type="button" onClick={() => decrement("children")}>
-                      -
-                    </button>
-                    <span>{passengerSelection.children}</span>
-                    <button type="button" onClick={() => increment("children")}>
-                      +
-                    </button>
-                  </div>
-                </div>
-                <div>
-                  <p>Infants (up to 2 years)</p>
-                  <div>
-                    <button type="button" onClick={() => decrement("infants")}>
-                      -
-                    </button>
-                    <span>{passengerSelection.infants}</span>
-                    <button type="button" onClick={() => increment("infants")}>
-                      +
-                    </button>
-                  </div>
-                </div>
-                <button onClick={() => handleClose()}>Закрыть</button>
+
+                <button
+                  type="button"
+                  className=" -ml-2 mt-3 mb-2 border-2 h-7 w-18 rounded-2xl text-white bg-primary-hover hover:bg-primary-after after:bg-primary-hover"
+                  onClick={() => handleClose()}
+                >
+                  Закрыть
+                </button>
               </dialog>
             )}
           </div>
 
           {/* Кнопка поиска */}
-          <div className="flex items-center h-14 w-auto ">
-            <button className="h-20 w-14 ">
+          <div className="flex items-center h-14 w-14 ml-30">
+            <button type="submit" className="h-20 w-14">
               <img
                 className="h-15 w-14 rounded-lg"
                 src={searchIcon}

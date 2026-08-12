@@ -10,17 +10,17 @@ export const useSearch = () => {
   const [queryTo, setQueryTo] = useState("");
   const [startDay, setStartDay] = useState(null);
   const [endDay, setEndDay] = useState(null);
-
   const [passengerSelection, setPassengerSelection] = useState({
     serviceClass: "economy",
     adults: 1,
     children: 0,
     infants: 0,
   });
-
   const [openDialog, setOpenDialog] = useState(false);
-
   const dialogRef = useRef(null);
+
+  const [fromFocused, setFromFocused] = useState(false);
+  const [toFocused, setToFocused] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -84,7 +84,7 @@ export const useSearch = () => {
   };
   const handleClose = (e) => {
     if (!e || e.target === e.currentTarget) {
-      setOpen(false);
+      setOpenDialog(false);
     }
     // dialogRef.current.close();
   };
@@ -153,5 +153,10 @@ export const useSearch = () => {
     decrement,
     increment,
     totalPassenger,
+
+    fromFocused,
+    setFromFocused,
+    toFocused,
+    setToFocused,
   };
 };
