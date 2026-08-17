@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 // overflow-hidden
 function Header() {
   return (
-    <header className="h-16 w-full font-serif bg-surface-container border-outline shadow-md  overflow-hidden">
+    <header className="position sticky top-0 h-16 w-full font-serif bg-surface-container border-outline shadow-md  overflow-hidden">
       <div className="flex justify-start items-center  w-full h-16">
         <img className="h-32 w-auto ml-3" src={logo} alt="logo" />
 

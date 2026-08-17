@@ -1,3 +1,30 @@
+import { forwardRef } from "react";
+
+export const RangeDateInput = forwardRef(
+  ({ value, onChange, onClick, className, placeholder, ...rest }, ref) => {
+    const handleChange = (e) => {
+      const cleaned = e.target.value.replace(/[^\d.\-\s]/g, "");
+      onChange({
+        target: { ...e.target, value: cleaned },
+      });
+    };
+
+    return (
+      <input
+        ref={ref}
+        value={value ?? ""}
+        onChange={handleChange}
+        onClick={onClick}
+        className={className}
+        placeholder={placeholder}
+        inputMode="numeric"
+        autoComplete="off"
+        {...rest}
+      />
+    );
+  },
+);
+
 export const SearchForm = ({
   value,
   onChange,
@@ -37,7 +64,7 @@ export const SearchForm = ({
       {isOpen && value && suggestions.length > 0 && (
         <ul className="absolute mt-14 bg-surface-container border-2 border-outline rounded-lg w-full max-h-48 overflow-y-auto z-10">
           {suggestions.map((city) => (
-            <li onMouseDown={() => onSelect(city.name)} key={city.id}>
+            <li onMouseDown={() => onSelect(city)} key={city.id}>
               {city.name}
             </li>
           ))}

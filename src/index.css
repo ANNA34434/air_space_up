@@ -35,3 +35,6 @@
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05); /* тень для небольших элементов */
   --shadow-md: 0 4px 12px rgba(0, 51, 102, 0.08); /* тень для средних элементов */
 }
+.custom-datepicker-popper {
+  z-index: 9999 !important;
+}
