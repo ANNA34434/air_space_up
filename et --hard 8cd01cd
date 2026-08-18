@@ -1,0 +1,20 @@
+[33m8cd01cd[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/search-update[m[33m, [m[1;31morigin/feature/search-update[m[33m)[m HEAD@{0}: reset: moving to HEAD
+[33m8cd01cd[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/search-update[m[33m, [m[1;31morigin/feature/search-update[m[33m)[m HEAD@{1}: commit: Adding a server folder: sending to the server the data entered in the search form.
+[33md0f4b12[m HEAD@{2}: commit: Добавление лейбл для input 'Where from' и 'Where to'
+[33m350fbb9[m HEAD@{3}: commit: Update search hook and Home page
+[33m95df0a4[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m HEAD@{4}: checkout: moving from main to feature/search-update
+[33m95df0a4[m[33m ([m[1;31morigin/main[m[33m, [m[1;32mmain[m[33m)[m HEAD@{5}: commit: Добавление логики выбора даты
+[33m98191cb[m HEAD@{6}: commit: Разделение логики и интерфейса
+[33m9790b8d[m HEAD@{7}: commit: Оформление формы главной страницы. Исправление логики работы кнопки смены направления'
+[33mfc34776[m HEAD@{8}: Branch: renamed refs/heads/clean_branch to refs/heads/main
+[33mfc34776[m HEAD@{10}: commit (initial): Initial commit
+[33mc13e20a[m HEAD@{11}: commit: Remove token.env from tracking and add to gitignore
+[33mc8e6f6d[m HEAD@{12}: Branch: renamed refs/heads/temp_branch to refs/heads/main
+[33mc8e6f6d[m HEAD@{14}: commit (initial): Initial commit with env variable
+[33mb8779c8[m HEAD@{15}: commit: Move Duffel token to env variable
+[33md9acb5c[m HEAD@{16}: Branch: renamed refs/heads/main to refs/heads/main
+[33md9acb5c[m HEAD@{18}: Branch: renamed refs/heads/main to refs/heads/main
+[33md9acb5c[m HEAD@{20}: commit: first commit
+[33mac18478[m HEAD@{21}: commit: первая фиксация
+[33mfdcc56f[m HEAD@{22}: Branch: renamed refs/heads/master to refs/heads/main
+[33mfdcc56f[m HEAD@{24}: commit (initial): создание формы поиска билетов
