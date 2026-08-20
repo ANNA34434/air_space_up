@@ -52,12 +52,15 @@ export const useSearch = () => {
     fetchData();
   }, []);
 
-  const filterOne = cities?.filter((city) =>
-    (city.name || "").toLowerCase().includes(queryFrom.toLowerCase()),
-  );
-  const filterTwo = cities?.filter((city) =>
-    (city.name || "").toLowerCase().includes(queryTo.toLowerCase()),
-  );
+  const filterOne =
+    cities?.filter((city) =>
+      (city.name || "").toLowerCase().includes(queryFrom.toLowerCase()),
+    ) || [];
+
+  const filterTwo =
+    cities?.filter((city) =>
+      (city.name || "").toLowerCase().includes(queryTo.toLowerCase()),
+    ) || [];
 
   const selectFrom = (city) => {
     setQueryFrom(city.name);
