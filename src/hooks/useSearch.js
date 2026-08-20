@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
-const KEY = import.meta.env.VITE_DUFFEL_TOKEN;
+const API_TOKEN = import.meta.env.VITE_TRAVELPAYOUTS_TOKEN;
 
 export const useSearch = () => {
   const navigate = useNavigate();
@@ -31,19 +31,21 @@ export const useSearch = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("/duffel-api/air/cities", {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${KEY}`,
-            "Duffel-Version": "v2",
-            Accept: "application/json",
-            "Accept-Language": "ru",
-          },
-        });
-        const data = await response.json();
-        setCites(data.data);
+        // 1. Используем прямой публичный URL Travelpayouts для городов
+        const response = await fetch(
+          "https://api.travelpayouts.com/data/ru/cities.json",
+        );
 
-        console.log(data);
+        if (!response.ok) {
+          throw new Error(`Ошибка сети: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // 2. Aviasales возвращает массив городов напрямую, а не в data.data
+        setCites(data);
+
+        console.log("Загруженные города:", data);
       } catch (error) {
         console.error("Ошибка при получении данных:", error);
       }
@@ -64,13 +66,13 @@ export const useSearch = () => {
 
   const selectFrom = (city) => {
     setQueryFrom(city.name);
-    setSelectedFromId(city.iata_code);
+    setSelectedFromId(city.code);
     setOpenFrom(false);
   };
 
   const selectTo = (city) => {
     setQueryTo(city.name);
-    setSelectedToId(city.iata_code);
+    setSelectedToId(city.code);
     setOpenTo(false);
   };
 
@@ -144,75 +146,30 @@ export const useSearch = () => {
     passengerSelection.children +
     passengerSelection.infants;
 
-  // Добавили async перед (e)
   const searchTicket = async (e) => {
     e.preventDefault();
 
-    const classCabin = {
-      economy: "economy",
-      "premium economy": "premium_economy",
-      business: "business",
-      first: "first",
-    };
-
-    const mappedCabinClass = classCabin[passengerSelection.serviceClass];
-    const formattedStart = startDay ? format(startDay, "yyyy-MM-dd") : null;
-    const formattedEnd = endDay ? format(endDay, "yyyy-MM-dd") : null;
-
-    const passengers = [
-      ...Array.from({ length: passengerSelection.adults }, () => ({
-        type: "adult",
-      })),
-      ...Array.from({ length: passengerSelection.children }, () => ({
-        type: "child",
-      })),
-      ...Array.from({ length: passengerSelection.infants }, () => ({
-        type: "infant_without_seat",
-      })),
-    ];
-
-    const slices = [
-      {
-        origin: selectedFromId,
-        destination: selectedToId,
-        departure_date: formattedStart,
-      },
-    ];
-
-    if (formattedEnd) {
-      slices.push({
-        origin: selectedToId,
-        destination: selectedFromId,
-        departure_date: formattedEnd,
-      });
-    }
-
-    const payload = {
-      data: {
-        slices: slices,
-        passengers: passengers,
-        cabin_class: mappedCabinClass,
-      },
-    };
+    const formattedStart = startDay ? format(startDay, "yyyy-MM") : "";
 
     try {
-      const response = await fetch("http://localhost:5000/api/search-tickets", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
+      // Делаем GET запрос к нашему бэкенду
+      const response = await fetch(
+        `http://localhost:5000/api/search-tickets?origin=${selectedFromId}&destination=${selectedToId}&depart_date=${formattedStart}`,
+      );
 
       const result = await response.json();
 
-      if (!response.ok) {
+      if (!response.ok || !result.success) {
         console.error("Ошибка от API:", result);
         return;
       }
-      navigate("/result", { state: { offers: result.data.offers } });
-      console.log("Успешный ответ от Duffel:", result.data);
-      console.log("Найденные рейсы (Offers):", result.data.offers);
+
+      // В ответе Aviasales билеты лежат в объекте под ключом destination
+      const destinationData = result.data[selectedToId] || {};
+      const offers = Object.values(destinationData);
+
+      navigate("/result", { state: { offers } });
+      console.log("Найденные билеты:", offers);
     } catch (error) {
       console.error("Ошибка соединения с сервером:", error);
     }
