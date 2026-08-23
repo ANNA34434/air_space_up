@@ -36,6 +36,7 @@ export const SearchForm = ({
   isOpen,
   label,
   isFocused,
+  ref,
 }) => {
   const isFloating = isFocused || (value && value.length > 0);
   return (
@@ -43,11 +44,13 @@ export const SearchForm = ({
       <input
         className=" border-2 border-outline placeholder-text-secondary rounded-lg h-14 w-full pt-2 pl-4 pr-4"
         type="text"
+        required
         value={value}
         placeholder={placeholder}
         onBlur={onBlur}
         onFocus={onFocus}
         onChange={onChange}
+        ref={ref}
       />
       {label && (
         <label

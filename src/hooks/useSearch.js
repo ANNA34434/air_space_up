@@ -27,11 +27,11 @@ export const useSearch = () => {
   const [toFocused, setToFocused] = useState(false);
   const [selectedFromId, setSelectedFromId] = useState(null);
   const [selectedToId, setSelectedToId] = useState(null);
+  const originInputRef = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // 1. Используем прямой публичный URL Travelpayouts для городов
         const response = await fetch(
           "https://api.travelpayouts.com/data/ru/cities.json",
         );
@@ -42,7 +42,6 @@ export const useSearch = () => {
 
         const data = await response.json();
 
-        // 2. Aviasales возвращает массив городов напрямую, а не в data.data
         setCites(data);
 
         console.log("Загруженные города:", data);
@@ -76,6 +75,21 @@ export const useSearch = () => {
     setOpenTo(false);
   };
 
+  const handleDestinations = (destinations) => {
+    setQueryTo(destinations);
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+
+    setTimeout(() => {
+      if (!queryFrom) {
+        originInputRef.current?.focus();
+      }
+    }, 300);
+  };
+
   const handleSwap = () => {
     setQueryFrom(queryTo);
     setQueryTo(queryFrom);
@@ -83,16 +97,13 @@ export const useSearch = () => {
     setSelectedToId(selectedFromId);
   };
 
-  // Функция для даты вылета
   const handleStartChange = (date) => {
     setStartDay(date);
-    // Если дата возврата уже выбрана, но она раньше новой даты вылета — сбрасываем возврат
     if (endDay && date > endDay) {
       setEndDay(null);
     }
   };
 
-  // Функция для даты возврата
   const handleEndChange = (date) => {
     setEndDay(date);
   };
@@ -152,7 +163,6 @@ export const useSearch = () => {
     const formattedStart = startDay ? format(startDay, "yyyy-MM") : "";
 
     try {
-      // Делаем GET запрос к нашему бэкенду
       const response = await fetch(
         `http://localhost:5000/api/search-tickets?origin=${selectedFromId}&destination=${selectedToId}&depart_date=${formattedStart}`,
       );
@@ -164,7 +174,6 @@ export const useSearch = () => {
         return;
       }
 
-      // В ответе Aviasales билеты лежат в объекте под ключом destination
       const destinationData = result.data[selectedToId] || {};
       const offers = Object.values(destinationData);
 
@@ -210,7 +219,9 @@ export const useSearch = () => {
     setToFocused,
     handleStartChange,
     handleEndChange,
-
     searchTicket,
+
+    handleDestinations,
+    originInputRef,
   };
 };

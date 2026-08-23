@@ -31,7 +31,6 @@ function Home() {
     setStartDay,
     endDay,
     setEndDay,
-    // handleDayts,
     passengerSelection,
     setPassengerSelection,
     handleConfirmPassengerSelection,
@@ -49,8 +48,10 @@ function Home() {
     setToFocused,
     handleStartChange,
     handleEndChange,
-
     searchTicket,
+
+    handleDestinations,
+    originInputRef,
   } = useSearch();
 
   return (
@@ -65,9 +66,10 @@ function Home() {
 
           <form
             onSubmit={searchTicket}
-            className="flex flex-row items-center font-serif  px-6 gap-3 h-33 w-5xl bg-surface-container rounded-xl "
+            className="flex flex-row relative items-center font-serif  px-6 gap-3 h-33 w-5xl bg-surface-container rounded-xl "
           >
             <SearchForm
+              ref={originInputRef}
               value={queryFrom}
               isFocused={fromFocused}
               label="Where from"
@@ -138,8 +140,11 @@ function Home() {
                 />
 
                 <DatePicker
+                  onChange={(date) => {
+                    handleStartChange(date);
+                    clearError("date");
+                  }}
                   selected={startDay}
-                  onChange={handleStartChange}
                   selectsStart
                   startDate={startDay}
                   endDate={endDay}
@@ -343,6 +348,7 @@ function Home() {
             </div>
 
             {/* Кнопка поиска */}
+
             <div className="flex items-center h-14 w-14 ml-30">
               <button type="submit" className="h-20 w-14">
                 <img
@@ -355,7 +361,7 @@ function Home() {
           </form>
         </div>
       </div>
-      <PopularDestinations />
+      <PopularDestinations onSelectDestination={handleDestinations} />
     </div>
   );
 }

@@ -13,7 +13,6 @@ app.get("/api/search-tickets", async (req, res) => {
   try {
     const { origin, destination, depart_date } = req.query;
 
-    // ВАЖНО: имя переменной должно совпадать с .env (с приставкой VITE_)
     const token = process.env.VITE_TRAVELPAYOUTS_TOKEN;
 
     if (!token) {
